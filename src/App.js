@@ -4,15 +4,11 @@ import {
   Paper,
   InputBase,
   Button,
-  Box,
   Select,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import chatWithJaneHistoryData from './chatData/Jane.json'
-import chatWithAustinHistoryData from './chatData/Austin.json'
-
-import Chat from './Chat'
+import ChatContent from './ChatContent'
 
 const useStyles = makeStyles({
   root: {
@@ -37,17 +33,17 @@ const useStyles = makeStyles({
   }
 });
 
-const channelData = {
-  Jane: chatWithJaneHistoryData,
-  Austin: chatWithAustinHistoryData
-}
 
-function App() {
+function App({ chatData, thisUserName }) {
+  const NODATA_KEY = 'noData'
   const classes = useStyles();
-  const [chatHistory, setChatHistory] = useState(channelData);
+  const preloadChatHistory = chatData || { [NODATA_KEY]: [] }
+  const [chatHistory, setChatHistory] = useState(preloadChatHistory);
   const [chatTextInput, setTextInput] =useState('');
-  const [selectedChannel, setChannel] = useState('Jane');
-  const thisUserName = 'Bob';
+  const preSelectedChannel = chatData 
+    ? Object.keys(chatData)[0]
+    : NODATA_KEY
+  const [selectedChannel, setChannel] = useState(preSelectedChannel);
 
   const handleChangeTextInput = event => {
     setTextInput(event.target.value)
@@ -74,22 +70,27 @@ function App() {
   return (
     <Container className={classes.root}>
 
-      <Box>
-        <Select
-          value={selectedChannel}
-          onChange={handleChangeSelectChannel}
-          inputProps={{
-            'data-testid': 'channelSelection'
-          }}
-          native={true}
-        >
-          <option value="Jane">Jane</option>
-          <option value="Austin">Austin</option>
-        </Select>
-      </Box>
+      <Select
+        value={selectedChannel}
+        onChange={handleChangeSelectChannel}
+        inputProps={{
+          'data-testid': 'channelSelection'
+        }}
+        native={true}
+      >
+        {
+          chatData
+            ? Object
+                .keys(chatData)
+                .map(channelName => (
+                  <option value={channelName}>{channelName}</option>
+                )) 
+            : <option data-testid="noDataOption" value={NODATA_KEY}>{NODATA_KEY}</option>
+        }
+      </Select>
       
 
-      <Chat
+      <ChatContent
         history={chatHistory[selectedChannel]}
         thisUserName={thisUserName}
       />

@@ -4,7 +4,16 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import chatWithJaneHistoryData from './chatData/Jane.json'
+import chatWithAustinHistoryData from './chatData/Austin.json'
+
+const chatData = {
+  Jane: chatWithJaneHistoryData,
+  Austin: chatWithAustinHistoryData
+}
+
+const thisUserName = 'Bob';
+ReactDOM.render(<App chatData={chatData} thisUserName={thisUserName}/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -21,21 +21,13 @@ const useStyles = makeStyles({
 		margin: 10,
 	},
 	userChatText: {
-		width: 300,
 		color: '#7300e6',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: 10
-		
 	},
-	botChatText: {
-		width: 300,
+	otherUserChatBox: {
 		backgroundColor: '#7300e6',
+	},
+	otherUserChatText: {
 		color: 'white',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center'
 	},
 	avatarContainer: {
 		display: 'flex',
@@ -46,17 +38,23 @@ const useStyles = makeStyles({
 function OtherUserChatText({ name, message }) {
 	const classes = useStyles();
 	return (
-		<ListItem alignItems="flex-start">
+		<ListItem alignItems="flex-start" className={classes.otherUserChatBox}>
 			<ListItemAvatar>
 				<Avatar alt={name} className={classes.avatar} />
 			</ListItemAvatar>
 			<ListItemText
-				primary={name}
+				primary={
+					<>
+						<Typography variant="h6" className={classes.otherUserChatText}>
+							{name}
+						</Typography>
+					</>
+				}
 				secondary={
 					<>
-					<Typography component="span">
-					{message}
-					</Typography>
+						<Typography component="span" className={classes.otherUserChatText}>
+							{message}
+						</Typography>
 					</>
 				}
 			/>
@@ -69,12 +67,18 @@ function UserChatText({ name, message }) {
 	return (
 		<ListItem alignItems="flex-start">
 			<ListItemText
-				primary={name}
+				primary={
+					<>
+						<Typography variant="h6" className={classes.userChatText}>
+							{name}
+						</Typography>
+					</>
+				}
 				secondary={
 					<>
-					<Typography component="span">
-					{message}
-					</Typography>
+						<Typography component="span" className={classes.userChatText}>
+							{message}
+						</Typography>
 					</>
 				}
 			/>
@@ -86,30 +90,32 @@ function UserChatText({ name, message }) {
 }
 
 
-function Chat({ history, thisUserName }) {
+function ChatContent({ history, thisUserName }) {
 	const classes = useStyles();
 	return (
 		<List className={classes.chatContainer}>
 			{
-				interpose(
-					history.map((chat, index) => {
-						return chat.name === thisUserName ?
-							<UserChatText
-								name={chat.name}
-								message={chat.message}
-								key={`${chat.name}-${index}`}
-							/> :
-							<OtherUserChatText
-								name={chat.name}
-								message={chat.message}
-								key={`${chat.name}-${index}`}
-							/>
-					}),
-					<Divider />
-				)
+				history.length > 0 ?
+					interpose(
+						history.map((chat, index) => {
+							return chat.name === thisUserName ?
+								<UserChatText
+									name={chat.name}
+									message={chat.message}
+									key={`${chat.name}-${index}`}
+								/> :
+								<OtherUserChatText
+									name={chat.name}
+									message={chat.message}
+									key={`${chat.name}-${index}`}
+								/>
+						}),
+						<Divider data-testid="divider"/>
+					) :
+					<Typography variant="h2"> No History </Typography>
 			}
 		</List>
 	)
 }
 
-export default Chat;
+export default ChatContent;
