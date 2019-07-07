@@ -6,7 +6,9 @@ import {
   Button,
   Avatar,
   Box,
-  Typography
+  Typography,
+  Select,
+  MenuItem
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -50,11 +52,22 @@ const useStyles = makeStyles({
   }
 });
 
-const chatHistoryData = [
+const chatWithJaneHistoryData = [
   { name: "Bob", message: "Hi." },
   { name: "Jane", message: "What would you like to buy today?" },
   { name: "Bob", message: "All the things" }
 ]
+
+const chatWithAustinHistoryData = [
+  { name: "Bob", message: "Hi." },
+  { name: "Austin", message: "Hello" },
+  { name: "Bob", message: "How are you?" }
+]
+
+const channelData = {
+  Jane: chatWithJaneHistoryData,
+  Austin: chatWithAustinHistoryData
+}
 
 function OtherUserChatText({ name, message }) {
   const classes = useStyles();
@@ -86,8 +99,9 @@ function UserChatText({ name, message }) {
 
 function App() {
   const classes = useStyles();
-  const [chatHistory, setChatHistory] = useState(chatHistoryData);
+  const [chatHistory, setChatHistory] = useState(channelData);
   const [chatTextInput, setTextInput] =useState('');
+  const [selectedChannel, setChannel] = useState('Jane');
   const thisUserName = 'Bob';
 
   const handleChangeTextInput = event => {
@@ -95,21 +109,37 @@ function App() {
   }
 
   const handleSubmitTextInput = () => {
-    setChatHistory([
+    setChatHistory({
       ...chatHistory,
-      {
-        message: chatTextInput,
-        name: thisUserName
-      }
-    ])
+      [selectedChannel]: [
+        ...chatHistory[selectedChannel],
+        {
+          name: thisUserName,
+          message: chatTextInput
+        }
+      ]
+    })
     setTextInput('')
+  }
+
+  const handleChangeSelectChannel = event => {
+    setChannel(event.target.value)
   }
 
   return (
     <Container className={classes.root}>
+
+      <Select
+        value={selectedChannel}
+        onChange={handleChangeSelectChannel}
+      >
+        <MenuItem value="Jane">Jane</MenuItem>
+        <MenuItem value="Austin">Austin</MenuItem>
+      </Select>
+
       <Box>
         {
-          chatHistory.map((chat) => {
+          chatHistory[selectedChannel].map((chat) => {
             return chat.name === thisUserName ? 
             <UserChatText
               name={chat.name}
