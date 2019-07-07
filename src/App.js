@@ -1,25 +1,122 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import {
+  Container,
+  Paper,
+  InputBase,
+  Button,
+  Avatar,
+  Box,
+  Typography
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles({
+  root: {
+    textAlign: 'center'
+  },
+  chatContainer: {
+  },
+  inputContainer: {
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: 400,
+  },
+  input: {
+    marginLeft: 8,
+    flex: 1,
+  },
+  avatar: {
+    margin: 10,
+  },
+  userChatText: {
+    width: 300,
+    color: '#112ddd',
+    textAlignment: 'center'
+  },
+  botChatText: {
+    width: 300,
+    backgroundColor: '#112ddd',
+    color: 'white',
+  },
+  chatTextContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: 14
+  },
+  avatarContainer: {
+    display: 'flex',
+    flexDirection: 'column'
+  }
+});
+
+const chatHistoryData = [
+  { name: "Bob", message: "Hi." },
+  { name: "Jane", message: "What would you like to buy today?" },
+  { name: "Bob", message: "All the things" }
+]
+
+function UserChatText({ name, message }) {
+  const classes = useStyles();
+
+  return (
+    <Box className={classes.chatTextContainer}>
+      <Box className={classes.avatarContainer}>
+        <Avatar alt={name} className={classes.avatar} />
+        <Typography variant="body1" gutterBottom>{name}</Typography>
+      </Box>
+      <Paper className={classes.userChatText}>{message}</Paper>
+    </Box>
+  )
+}
+
+function OtherUserChatText({ name, message }) {
+  const classes = useStyles();
+
+  return (
+    <Box className={classes.chatTextContainer}>
+      <Paper className={classes.botChatText}>{message}</Paper>
+      <Box className={classes.avatarContainer}>
+        <Avatar alt={name} className={classes.avatar} />
+        <Typography variant="body1" gutterBottom>{name}</Typography>
+      </Box>
+    </Box>
+  )
+}
 
 function App() {
+  const classes = useStyles();
+  const [chatHistory, setChatHistory] = useState(chatHistoryData);
+  const thisUserName = 'Bob';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container className={classes.root}>
+      <Box>
+        {
+          chatHistory.map((chat) => {
+            return chat.name === thisUserName ? 
+            <UserChatText
+              name={chat.name}
+              message={chat.message}
+            /> :
+            <OtherUserChatText
+              name={chat.name}
+              message={chat.message}
+            />
+          })
+        }
+      </Box>
+
+      <Paper className={classes.inputContainer}>
+        <InputBase
+          className={classes.input}
+          placeholder=""
+        />
+        <Button variant="outlined" color="primary">
+          send
+        </Button>
+      </Paper>
+    </Container>
   );
 }
 
