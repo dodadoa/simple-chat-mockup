@@ -1,3 +1,6 @@
+## Install
+
+### `yarn`
 
 ## Brief of Design
 
