@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Bob",
+        "message": "Hi."
+    },
+    { 
+        "name": "Jane",
+        "message": "What would you like to buy today?"
+    },
+    { 
+        "name": "Bob",
+        "message": "All the things"
+    }
+]

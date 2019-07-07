@@ -4,19 +4,22 @@ import {
   Paper,
   InputBase,
   Button,
-  Avatar,
   Box,
-  Typography,
   Select,
-  MenuItem
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+import chatWithJaneHistoryData from './chatData/Jane.json'
+import chatWithAustinHistoryData from './chatData/Austin.json'
+
+import Chat from './Chat'
+
 const useStyles = makeStyles({
   root: {
-    textAlign: 'center'
-  },
-  chatContainer: {
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'start',
   },
   inputContainer: {
     padding: '2px 4px',
@@ -28,73 +31,15 @@ const useStyles = makeStyles({
     marginLeft: 8,
     flex: 1,
   },
-  avatar: {
-    margin: 10,
-  },
-  userChatText: {
-    width: 300,
-    color: '#112ddd',
-    textAlignment: 'center'
-  },
-  botChatText: {
-    width: 300,
-    backgroundColor: '#112ddd',
-    color: 'white',
-  },
-  chatTextContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    margin: 14
-  },
   avatarContainer: {
     display: 'flex',
     flexDirection: 'column'
   }
 });
 
-const chatWithJaneHistoryData = [
-  { name: "Bob", message: "Hi." },
-  { name: "Jane", message: "What would you like to buy today?" },
-  { name: "Bob", message: "All the things" }
-]
-
-const chatWithAustinHistoryData = [
-  { name: "Bob", message: "Hi." },
-  { name: "Austin", message: "Hello" },
-  { name: "Bob", message: "How are you?" }
-]
-
 const channelData = {
   Jane: chatWithJaneHistoryData,
   Austin: chatWithAustinHistoryData
-}
-
-function OtherUserChatText({ name, message }) {
-  const classes = useStyles();
-
-  return (
-    <Box className={classes.chatTextContainer}>
-      <Box className={classes.avatarContainer}>
-        <Avatar alt={name} className={classes.avatar} />
-        <Typography variant="body1" gutterBottom>{name}</Typography>
-      </Box>
-      <Paper className={classes.userChatText}>{message}</Paper>
-    </Box>
-  )
-}
-
-function UserChatText({ name, message }) {
-  const classes = useStyles();
-
-  return (
-    <Box className={classes.chatTextContainer}>
-      <Paper className={classes.botChatText}>{message}</Paper>
-      <Box className={classes.avatarContainer}>
-        <Avatar alt={name} className={classes.avatar} />
-        <Typography variant="body1" gutterBottom>{name}</Typography>
-      </Box>
-    </Box>
-  )
 }
 
 function App() {
@@ -129,29 +74,25 @@ function App() {
   return (
     <Container className={classes.root}>
 
-      <Select
-        value={selectedChannel}
-        onChange={handleChangeSelectChannel}
-      >
-        <MenuItem value="Jane">Jane</MenuItem>
-        <MenuItem value="Austin">Austin</MenuItem>
-      </Select>
-
       <Box>
-        {
-          chatHistory[selectedChannel].map((chat) => {
-            return chat.name === thisUserName ? 
-            <UserChatText
-              name={chat.name}
-              message={chat.message}
-            /> :
-            <OtherUserChatText
-              name={chat.name}
-              message={chat.message}
-            />
-          })
-        }
+        <Select
+          value={selectedChannel}
+          onChange={handleChangeSelectChannel}
+          inputProps={{
+            'data-testid': 'channelSelection'
+          }}
+          native={true}
+        >
+          <option value="Jane">Jane</option>
+          <option value="Austin">Austin</option>
+        </Select>
       </Box>
+      
+
+      <Chat
+        history={chatHistory[selectedChannel]}
+        thisUserName={thisUserName}
+      />
 
       <Paper className={classes.inputContainer}>
         <InputBase
@@ -159,8 +100,16 @@ function App() {
           placeholder=""
           value={chatTextInput}
           onChange={handleChangeTextInput}
+          inputProps={{
+            'data-testid': 'chatText'
+          }}
         />
-        <Button variant="outlined" color="primary" onClick={handleSubmitTextInput}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleSubmitTextInput}
+          data-testid="submitChat"
+        >
           send
         </Button>
       </Paper>
