@@ -56,7 +56,7 @@ const chatHistoryData = [
   { name: "Bob", message: "All the things" }
 ]
 
-function UserChatText({ name, message }) {
+function OtherUserChatText({ name, message }) {
   const classes = useStyles();
 
   return (
@@ -70,7 +70,7 @@ function UserChatText({ name, message }) {
   )
 }
 
-function OtherUserChatText({ name, message }) {
+function UserChatText({ name, message }) {
   const classes = useStyles();
 
   return (
@@ -87,7 +87,23 @@ function OtherUserChatText({ name, message }) {
 function App() {
   const classes = useStyles();
   const [chatHistory, setChatHistory] = useState(chatHistoryData);
+  const [chatTextInput, setTextInput] =useState('');
   const thisUserName = 'Bob';
+
+  const handleChangeTextInput = event => {
+    setTextInput(event.target.value)
+  }
+
+  const handleSubmitTextInput = () => {
+    setChatHistory([
+      ...chatHistory,
+      {
+        message: chatTextInput,
+        name: thisUserName
+      }
+    ])
+    setTextInput('')
+  }
 
   return (
     <Container className={classes.root}>
@@ -111,8 +127,10 @@ function App() {
         <InputBase
           className={classes.input}
           placeholder=""
+          value={chatTextInput}
+          onChange={handleChangeTextInput}
         />
-        <Button variant="outlined" color="primary">
+        <Button variant="outlined" color="primary" onClick={handleSubmitTextInput}>
           send
         </Button>
       </Paper>
